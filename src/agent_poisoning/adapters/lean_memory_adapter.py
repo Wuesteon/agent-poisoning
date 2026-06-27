@@ -54,10 +54,9 @@ class LeanMemoryBackend:
         return hits
 
     def reset(self, namespace: str) -> None:
-        # One SQLite file per namespace; close handles, delete file, reopen lazily.
+        # One SQLite file per namespace; lean_memory uses the namespace string verbatim.
         self._mem.close()
-        safe = "".join(c if c.isalnum() else "_" for c in namespace) or "default"
-        db = self._root / f"{safe}.db"
+        db = self._root / f"{namespace}.db"
         db.unlink(missing_ok=True)
         from lean_memory import Memory
 

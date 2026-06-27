@@ -173,8 +173,11 @@ DEFENSE_PROFILES = {
 # ── Verdict detection ─────────────────────────────────────────────────────────
 
 def classify_response(text: str) -> str:
+    import re
     t = text.strip()
-    first4 = t[:4].lower()
+    # Strip leading markdown bold/italic markers before checking first word
+    stripped = re.sub(r'^[\*_]+', '', t).strip()
+    first4 = stripped[:4].lower()
     if first4.startswith("yes"):
         return "TRUST"
     if first4.startswith("no"):
@@ -213,9 +216,9 @@ def call_gemini(api_key: str, system_prompt: str, memories: list[str], question:
         f"Question: {question}"
     )
     response = client.models.generate_content(
-        model="models/gemini-2.5-flash",
+        model="models/gemini-3.1-pro-preview",
         contents=full_prompt,
-        config=types.GenerateContentConfig(max_output_tokens=1024, temperature=0.0),
+        config=types.GenerateContentConfig(max_output_tokens=8192, temperature=0.0),
     )
     return response.text or ""
 
