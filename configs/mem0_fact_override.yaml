@@ -1,0 +1,15 @@
+# Example experiment: fact-override attack against self-hosted Mem0.
+# Pair with configs/lean_memory_fact_override.yaml (identical except `backend`)
+# to get a head-to-head comparison.
+name: fact-override-v1
+seed: 1337
+backend: mem0
+
+victim_provider: gemini
+victim_model: models/gemini-2.5-flash
+victim_temperature: 0.0
+
+namespace: victim-user
+attack_set: fact_override
+n_payloads: 20
+probe_set: default_probes

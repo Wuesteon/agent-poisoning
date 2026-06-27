@@ -1,0 +1,12 @@
+name: slow-burn-v1
+seed: 1337
+backend: lean_memory
+
+victim_provider: gemini
+victim_model: models/gemini-2.5-flash
+victim_temperature: 0.0
+
+namespace: victim-slow-burn
+attack_set: slow_burn
+n_payloads: 12
+probe_set: default_probes

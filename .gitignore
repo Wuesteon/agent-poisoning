@@ -1,0 +1,19 @@
+# secrets
+.env
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# experiment artifacts — logs and memory DBs are regenerated, not committed
+data/logs/*.jsonl
+data/memory_stores/
+!data/logs/.gitkeep
+
+# os
+.DS_Store

@@ -1,0 +1,70 @@
+[project]
+name = "agent-poisoning"
+version = "0.1.0"
+description = "Defensive security research harness: memory-poisoning resistance of Mem0 vs lean-memory."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+authors = [{ name = "agent-poisoning research" }]
+
+dependencies = [
+    # --- memory backends under test ---
+    "mem0ai>=0.1.40",            # Mem0 client; talks to the self-hosted server (docker-compose).
+    "lean-memory",               # local path dep (see [tool.uv.sources]); the second backend under test.
+    # --- LLM SDKs (victim agent + Mem0's extraction LLM) ---
+    # We pin one provider per run via config; both are declared so either can be selected.
+    "anthropic>=0.40",
+    "openai>=1.50",
+    # --- harness plumbing ---
+    "pydantic>=2.7",             # typed config + log record schemas (frozen models = reproducibility).
+    "pydantic-settings>=2.3",    # load secrets/env into typed Settings.
+    "rich>=13.7",                # pretty CLI tables/panels for `poison report`.
+    "typer>=0.12",               # the `poison` CLI (inject / run-trial / report).
+    "pyyaml>=6.0",               # experiment config files live in configs/*.yaml.
+    "httpx>=0.27",
+    "google-genai>=2.10.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-mock>=3.12",
+    "ruff>=0.5",                 # lint + format.
+    "mypy>=1.10",
+]
+
+[project.scripts]
+# Single entrypoint. Subcommands: inject, run-trial, report. (see cli.py)
+poison = "agent_poisoning.cli:app"
+
+[tool.uv.sources]
+# lean-memory is consumed as an editable local checkout next to this repo.
+# Project lives at .../research/agent-poisoning, so ../lean-memory => .../research/lean-memory.
+lean-memory = { path = "../lean-memory", editable = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "pytest-mock>=3.15.1",
+    "ruff>=0.15.20",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/agent_poisoning"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+[tool.mypy]
+python_version = "3.11"
+packages = ["agent_poisoning"]
+strict = false

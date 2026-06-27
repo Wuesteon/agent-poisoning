@@ -1,0 +1,9 @@
+{
+  "venvPath": ".",
+  "venv": ".venv",
+  "pythonVersion": "3.11",
+  "pythonPlatform": "Darwin",
+  "include": ["src", "tests", "analysis"],
+  "exclude": [".venv"],
+  "typeCheckingMode": "basic"
+}

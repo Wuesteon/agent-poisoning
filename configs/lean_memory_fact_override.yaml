@@ -1,0 +1,14 @@
+# Same attack/probes/seed as mem0_fact_override.yaml; only the backend differs.
+# Identical config_hash inputs except `backend` => directly comparable run logs.
+name: fact-override-v1
+seed: 1337
+backend: lean_memory
+
+victim_provider: gemini
+victim_model: models/gemini-2.5-flash
+victim_temperature: 0.0
+
+namespace: victim-user
+attack_set: fact_override
+n_payloads: 20
+probe_set: default_probes
