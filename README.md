@@ -35,6 +35,8 @@ Two attack strategies:
 
 ## Full Results
 
+### Profile experiment
+
 | Profile | Backend | Attack | Rounds to flip |
 |---|---|---|---|
 | Cautious | Mem0 | Social proof | >10 (resistant) |
@@ -44,8 +46,21 @@ Two attack strategies:
 | Pragmatic | Mem0 | — | 0 (trusted at baseline) |
 | Pragmatic | lean-memory | — | 0 (trusted at baseline) |
 
+### Defense experiment
+
+Four production-style defenses tested against the same reframing attack (lean-memory backend):
+
+| Defense | Flip Round | Result |
+|---|---|---|
+| No defense (baseline cautious prompt) | 4 | Flipped — inconsistent resistance |
+| Guardrail prompt | 3 | Flipped — marginal improvement |
+| Provenance tagging (`[user-message]` prefix) | 1 | Flipped earlier — **counterproductive** |
+| Skeptical prompt (verification required) | Never | **Resistant** |
+| Hardened production prompt | Never | **Resistant** |
+
 Raw results (full round-by-round transcripts with memories retrieved and agent responses):
-- [`data/profile_experiment/`](data/profile_experiment/) — JSON files from each run
+- [`data/profile_experiment/`](data/profile_experiment/) — profile experiment JSON runs
+- [`data/defense_experiment/`](data/defense_experiment/) — defense experiment JSON runs
 
 ---
 
@@ -53,7 +68,8 @@ Raw results (full round-by-round transcripts with memories retrieved and agent r
 
 ```
 agent-poisoning/
-├── profile_trust_experiment.py    # two-profile trust poisoning experiment (run this)
+├── profile_trust_experiment.py    # two-profile trust poisoning experiment (Exp 1 & 2)
+├── defense_experiment.py          # four-defense effectiveness experiment (Exp 3)
 ├── BLOG.md                        # full research writeup
 ├── configs/                       # YAML experiment configs for the general harness
 │   ├── mem0_slow_burn.yaml
@@ -102,8 +118,14 @@ cp .env.example .env
 ### Run
 
 ```bash
-# Two-profile trust poisoning experiment (the main finding)
+# Experiment 1 & 2: Two-profile trust poisoning (cautious vs pragmatic, 2 backends)
 uv run python profile_trust_experiment.py
+
+# Experiment 3: Defense effectiveness (4 defenses vs reframing attack)
+uv run python defense_experiment.py
+
+# Experiment 3 on both backends (lean_memory + Mem0 Cloud)
+uv run python defense_experiment.py --both-backends
 
 # General harness (slow-burn / fact-override attack sets)
 uv run poison run-trial --config configs/mem0_slow_burn.yaml
